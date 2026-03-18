@@ -52590,6 +52590,7 @@ async function execute() {
 	const { full_name } = repository;
 
 	core_debug(JSON.stringify(github_context));
+	console.log(github_context);
 
 	/** @type {GitHubContext} */
 	const gitHubContext = {

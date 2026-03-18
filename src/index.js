@@ -18,6 +18,7 @@ async function execute() {
 	const { full_name } = repository;
 
 	debug(JSON.stringify(context));
+	console.log(context);
 
 	/** @type {GitHubContext} */
 	const gitHubContext = {
