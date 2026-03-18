@@ -3,7 +3,7 @@
  *
  * @property {string | null} body
  * @property {string} title
- * @property {url} string;
+ * @property {string} url;
  */
 
 /**
