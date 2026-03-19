@@ -6,8 +6,8 @@
  * @returns {GitHubIssue}
  */
 export function parseGitHubIssue(payload) {
-	const { repository } = payload;
-	const { body, html_url: url, title } = repository;
+	const { issue } = payload;
+	const { body, html_url: url, title } = issue;
 
 	/** @type {GitHubIssue} */
 	const gitHubIssue = {
