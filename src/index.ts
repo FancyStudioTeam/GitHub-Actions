@@ -1,5 +1,3 @@
-// @ts-check
-
 import { getInput, setFailed } from '@actions/core';
 import { context } from '@actions/github';
 import { ISSUE_OPENED_MESSAGE } from './lib/messages/IssueOpened.js';
