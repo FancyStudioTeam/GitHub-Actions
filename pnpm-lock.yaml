@@ -17,9 +17,6 @@ importers:
       '@discordjs/builders':
         specifier: 1.13.1
         version: 1.13.1
-      '@discordjs/formatters':
-        specifier: 0.6.2
-        version: 0.6.2
       discord-api-types:
         specifier: 0.38.42
         version: 0.38.42
