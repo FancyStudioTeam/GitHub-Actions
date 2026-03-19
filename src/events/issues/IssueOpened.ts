@@ -7,13 +7,12 @@ import {
 	hyperlink,
 	TextDisplayBuilder,
 } from '@discordjs/builders';
+import { IssuesOpenedEvent } from '@octokit/webhooks-types';
 
 import { GREEN_COLOR } from '#/lib/Colors.js';
 import { ISSUE_OPENED_EMOJI } from '#/lib/Emojis.js';
 
-import type { IssueMessageOptions } from './Shared.js';
-
-export function ISSUE_OPENED_MESSAGE({ issue, repository }: IssueMessageOptions): ContainerBuilder {
+export function ISSUE_OPENED_MESSAGE({ issue, repository }: IssuesOpenedEvent): ContainerBuilder {
 	const { body: issueBody, number: issueNumber, title: issueTitle, url: issueUrl } = issue;
 	const { full_name: repositoryFullName } = repository;
 

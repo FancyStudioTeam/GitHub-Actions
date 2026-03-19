@@ -7,13 +7,12 @@ import {
 	hyperlink,
 	TextDisplayBuilder,
 } from '@discordjs/builders';
+import { IssuesClosedEvent } from '@octokit/webhooks-types';
 
 import { PURPLE_COLOR } from '#/lib/Colors.js';
 import { ISSUE_CLOSED_EMOJI } from '#/lib/Emojis.js';
 
-import type { IssueMessageOptions } from './Shared.js';
-
-export function ISSUE_CLOSED_MESSAGE({ issue, repository }: IssueMessageOptions): ContainerBuilder {
+export function ISSUE_CLOSED_MESSAGE({ issue, repository }: IssuesClosedEvent): ContainerBuilder {
 	const { number: issueNumber, title: issueTitle, url: issueUrl } = issue;
 	const { full_name: repositoryFullName } = repository;
 

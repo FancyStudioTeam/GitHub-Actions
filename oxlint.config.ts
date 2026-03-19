@@ -8,8 +8,14 @@ export default defineConfig({
 	},
 	rules: {
 		eqeqeq: 'error',
+		'no-commonjs': 'error',
+		'no-empty': 'error',
+		'no-implicit-coercion': 'error',
+		'no-nodejs-modules': 'off',
+		'no-static-only-class': 'warn',
 		'prefer-node-protocol': 'error',
 		'prefer-nullish-coalescing': 'error',
 		'sort-keys': 'warn',
+		'unified-signatures': 'error',
 	},
 });

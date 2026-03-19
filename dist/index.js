@@ -48400,29 +48400,16 @@ function ISSUE_OPENED_MESSAGE({ issue, repository }) {
         const webhookToken = getInput('webhook_token');
         const webhook = new WebhookClient(webhookId, webhookToken);
         const { eventName, payload } = context;
-        console.dir(context, {
-            colors: true,
-            depth: null,
-        });
         switch (eventName) {
             case 'issues': {
-                const { action, issue, repository } = payload;
-                if (!action) {
-                    return setFailed('Cannot handle issue without an action');
-                }
-                if (!issue || !repository) {
-                    return setFailed('Cannot handle issue without an issue or repository object');
-                }
+                const { action } = payload;
                 const messages = {
                     closed: ISSUE_CLOSED_MESSAGE,
                     opened: ISSUE_OPENED_MESSAGE,
                 };
                 const message = messages[action];
                 if (message) {
-                    await webhook.execute(message({
-                        issue: issue,
-                        repository: repository,
-                    }));
+                    await webhook.execute(message(payload));
                 }
             }
         }
@@ -48433,4 +48420,4 @@ function ISSUE_OPENED_MESSAGE({ issue, repository }) {
         }
     }
 }
-run();//# sourceMappingURL=index.js.map
+void run();//# sourceMappingURL=index.js.map
