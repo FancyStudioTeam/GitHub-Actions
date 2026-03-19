@@ -49191,7 +49191,7 @@ const GREEN_COLOR = 0x1a7f37;
 const ISSUE_OPENED_EMOJI = '<:_:1483983242527899738>';
 
 /* biome-ignore-all lint/style/useNamingConvention: (x) */
-function ISSUE_OPENED_MESSAGE({ issue, repository }) {
+function ISSUE_OPENED_MESSAGE({ issue, repository, }) {
     const { body: issueBody, title: issueTitle } = issue;
     const { fullName: repositoryFullName, url: repositoryUrl } = repository;
     const repositoryHyperlink = formatRepositoryHyperlink(repositoryFullName, repositoryUrl);
@@ -49209,52 +49209,36 @@ function ISSUE_OPENED_MESSAGE({ issue, repository }) {
     }
     return containerBuilder;
 }
-/*
-interface IssueOpenedMessageOptions {
-    issue: GitHubIssue;
-    repository: GitHubRepository;
-    }*/
-
-// @ts-check
-
 
 class WebhookClient {
-	/**
-	 * @param {string} webhookId
-	 * @param {string} webhookToken
-	 */
-	constructor(webhookId, webhookToken) {
-		this.webhookId = webhookId;
-		this.webhookToken = webhookToken;
-	}
-
-	_createRequestUrl() {
-		const { webhookId, webhookToken } = this;
-
-		const url = new URL(`https://discord.com/api/v10/webhooks/${webhookId}/${webhookToken}`);
-		const { searchParams } = url;
-
-		searchParams.set('with_components', 'true');
-
-		return url;
-	}
-
-	async execute(message) {
-		const url = this._createRequestUrl();
-
-		await fetch(url, {
-			body: JSON.stringify({
-				components: [
-					message,
-				],
-				flags: MessageFlags.IsComponentsV2,
-			}),
-			headers: {
-				'content-type': 'application/json',
-			},
-			method: 'POST',
-		});
-	}
+    webhookId;
+    webhookToken;
+    constructor(webhookId, webhookToken) {
+        this.webhookId = webhookId;
+        this.webhookToken = webhookToken;
+    }
+    _createRequestUrl() {
+        const { webhookId, webhookToken } = this;
+        const url = new URL(`https://discord.com/api/v10/webhooks/${webhookId}/${webhookToken}`);
+        const { searchParams } = url;
+        searchParams.set('with_components', 'true');
+        return url;
+    }
+    async execute(containerBuilder) {
+        const url = this._createRequestUrl();
+        await fetch(url, {
+            body: JSON.stringify({
+                components: [
+                    containerBuilder,
+                ],
+                flags: MessageFlags.IsComponentsV2,
+            }),
+            headers: {
+                'content-type': 'application/json',
+            },
+            method: 'POST',
+        });
+    }
 }
 
 function parseGitHubIssue(payload) {

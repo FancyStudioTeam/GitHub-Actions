@@ -1,5 +1,8 @@
 import { ContainerBuilder } from '@discordjs/builders';
-export declare function ISSUE_OPENED_MESSAGE({ issue, repository }: {
-    issue: any;
-    repository: any;
-}): ContainerBuilder;
+import type { GitHubIssue, GitHubRepository } from '#/types/GitHub.js';
+export declare function ISSUE_OPENED_MESSAGE({ issue, repository, }: IssueOpenedMessageOptions): ContainerBuilder;
+interface IssueOpenedMessageOptions {
+    issue: GitHubIssue;
+    repository: GitHubRepository;
+}
+export {};
