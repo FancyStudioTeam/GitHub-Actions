@@ -52638,7 +52638,7 @@ function ISSUE_OPENED_MESSAGE({
 	containerBuilder.addTextDisplayComponents(containerTitleBuilder);
 	containerBuilder.setAccentColor(GREEN_COLOR);
 
-	if (body) {
+	if (issueBody) {
 		const containerBodyBuilder = new TextDisplayBuilder();
 
 		containerBodyBuilder.setContent(body);
