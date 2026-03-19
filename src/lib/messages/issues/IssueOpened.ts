@@ -8,14 +8,11 @@ import {
 	SeparatorBuilder,
 	TextDisplayBuilder,
 } from '@discordjs/builders';
-import type { GitHubIssue, GitHubRepository } from '#/types/GitHub.js';
-import { GREEN_COLOR } from '../Colors.js';
-import { ISSUE_OPENED_EMOJI } from '../Emojis.js';
+import { GREEN_COLOR } from '../../Colors.js';
+import { ISSUE_OPENED_EMOJI } from '../../Emojis.js';
+import type { IssueMessageOptions } from './shared.js';
 
-export function ISSUE_OPENED_MESSAGE({
-	issue,
-	repository,
-}: IssueOpenedMessageOptions): ContainerBuilder {
+export function ISSUE_OPENED_MESSAGE({ issue, repository }: IssueMessageOptions): ContainerBuilder {
 	const { body: issueBody, number: issueNumber, title: issueTitle, url: issueUrl } = issue;
 	const { fullName: repositoryFullName } = repository;
 
@@ -46,9 +43,4 @@ export function ISSUE_OPENED_MESSAGE({
 	}
 
 	return containerBuilder;
-}
-
-interface IssueOpenedMessageOptions {
-	issue: GitHubIssue;
-	repository: GitHubRepository;
 }

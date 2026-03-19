@@ -49183,11 +49183,25 @@ function embedLength(data) {
 __name(embedLength, "embedLength");
 
 const GREEN_COLOR = 0x1a7f37;
+const PURPLE_COLOR = 0x8250df;
 
+const ISSUE_CLOSED_EMOJI = '<:_:1484004392586969128>';
 const ISSUE_OPENED_EMOJI = '<:_:1483983242527899738>';
 
 /* biome-ignore-all lint/style/useNamingConvention: (x) */
-function ISSUE_OPENED_MESSAGE({ issue, repository, }) {
+function ISSUE_CLOSED_MESSAGE({ issue, repository }) {
+    const { number: issueNumber, title: issueTitle, url: issueUrl } = issue;
+    const { fullName: repositoryFullName } = repository;
+    const containerBuilder = new ContainerBuilder();
+    const containerTitleBuilder = new TextDisplayBuilder();
+    containerTitleBuilder.setContent(heading(hyperlink(`${ISSUE_CLOSED_EMOJI} [${repositoryFullName} - Issue #${issueNumber}]: ${issueTitle}`, issueUrl), HeadingLevel.Three));
+    containerBuilder.addTextDisplayComponents(containerTitleBuilder);
+    containerBuilder.setAccentColor(PURPLE_COLOR);
+    return containerBuilder;
+}
+
+/* biome-ignore-all lint/style/useNamingConvention: (x) */
+function ISSUE_OPENED_MESSAGE({ issue, repository }) {
     const { body: issueBody, number: issueNumber, title: issueTitle, url: issueUrl } = issue;
     const { fullName: repositoryFullName } = repository;
     const containerBuilder = new ContainerBuilder();
@@ -49278,6 +49292,7 @@ async function run() {
                 const issue = parseGitHubIssue(payload);
                 const repository = parseGitHubRepository(payload);
                 const messages = {
+                    closed: ISSUE_CLOSED_MESSAGE,
                     opened: ISSUE_OPENED_MESSAGE,
                 };
                 const message = messages[action];

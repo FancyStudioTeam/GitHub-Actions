@@ -1,1 +1,2 @@
+export declare const ISSUE_CLOSED_EMOJI = "<:_:1484004392586969128>";
 export declare const ISSUE_OPENED_EMOJI = "<:_:1483983242527899738>";
