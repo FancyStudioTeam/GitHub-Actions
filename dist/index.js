@@ -49257,46 +49257,26 @@ class WebhookClient {
 	}
 }
 
-/// <reference path="../../types/GitHub.js" />
-// @ts-check
-
-/**
- * @param {Record<string, any>} payload
- * @returns {GitHubIssue}
- */
 function parseGitHubIssue(payload) {
-	const { issue } = payload;
-	const { body, html_url: url, title } = issue;
-
-	/** @type {GitHubIssue} */
-	const gitHubIssue = {
-		body: body || null,
-		title,
-		url,
-	};
-
-	return gitHubIssue;
+    const { issue } = payload;
+    const { body, html_url, title } = issue;
+    const gitHubIssue = {
+        body: body || null,
+        title,
+        url: html_url,
+    };
+    return gitHubIssue;
 }
 
-/// <reference path="../../types/GitHub.js" />
-// @ts-check
-
-/**
- * @param {Record<string, any>} payload
- * @returns {GitHubRepository}
- */
 function parseGitHubRepository(payload) {
-	const { repository } = payload;
-	const { full_name: fullName, html_url: url, name } = repository;
-
-	/** @type {GitHubRepository} */
-	const gitHubRepository = {
-		fullName,
-		name,
-		url,
-	};
-
-	return gitHubRepository;
+    const { repository } = payload;
+    const { full_name, html_url, name } = repository;
+    const gitHubRepository = {
+        fullName: full_name,
+        name,
+        url: html_url,
+    };
+    return gitHubRepository;
 }
 
 async function run() {
