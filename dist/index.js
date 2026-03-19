@@ -52604,7 +52604,7 @@ function formatRepositoryHyperlink(repositoryFullName, repositoryUrl) {
 const GREEN_COLOR = 0x1a7f37;
 
 ;// CONCATENATED MODULE: ./src/lib/Emojis.js
-const ISSUE_OPENED_EMOJI = "<:_:1483950815013114071>";
+const ISSUE_OPENED_EMOJI = "<:_:1483983242527899738>";
 
 ;// CONCATENATED MODULE: ./src/lib/messages/IssueOpened.js
 /* biome-ignore-all lint/style/useNamingConvention: (x) */
