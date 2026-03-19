@@ -49192,14 +49192,16 @@ const ISSUE_OPENED_EMOJI = '<:_:1483983242527899738>';
 
 /* biome-ignore-all lint/style/useNamingConvention: (x) */
 function ISSUE_OPENED_MESSAGE({ issue, repository, }) {
-    const { body: issueBody, title: issueTitle } = issue;
+    const { body: issueBody, number: issueNumber, title: issueTitle, url: issueUrl } = issue;
     const { fullName: repositoryFullName, url: repositoryUrl } = repository;
     const repositoryHyperlink = formatRepositoryHyperlink(repositoryFullName, repositoryUrl);
     const containerBuilder = new ContainerBuilder();
     const containerSeparatorBuilder = new SeparatorBuilder();
     const containerTitleBuilder = new TextDisplayBuilder();
-    containerTitleBuilder.setContent(heading(`${ISSUE_OPENED_EMOJI} ${repositoryHyperlink} - Issue Opened: ${issueTitle}`, HeadingLevel.Three));
-    containerBuilder.addTextDisplayComponents(containerTitleBuilder);
+    const containerSubtitleBuilder = new TextDisplayBuilder();
+    containerTitleBuilder.setContent(heading(`${ISSUE_OPENED_EMOJI} ${repositoryHyperlink}: New Issue`, HeadingLevel.Two));
+    containerSubtitleBuilder.setContent(hyperlink(`[Issue #${issueNumber}] ${issueTitle}`, issueUrl));
+    containerBuilder.addTextDisplayComponents(containerTitleBuilder, containerSubtitleBuilder);
     containerBuilder.setAccentColor(GREEN_COLOR);
     if (issueBody) {
         const containerBodyBuilder = new TextDisplayBuilder();
@@ -49243,9 +49245,10 @@ class WebhookClient {
 
 function parseGitHubIssue(payload) {
     const { issue } = payload;
-    const { body, html_url, title } = issue;
+    const { body, html_url, number, title } = issue;
     const gitHubIssue = {
         body: body || null,
+        number,
         title,
         url: html_url,
     };

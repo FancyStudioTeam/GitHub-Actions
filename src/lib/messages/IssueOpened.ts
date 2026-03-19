@@ -4,6 +4,7 @@ import {
 	ContainerBuilder,
 	HeadingLevel,
 	heading,
+	hyperlink,
 	SeparatorBuilder,
 	TextDisplayBuilder,
 } from '@discordjs/builders';
@@ -16,7 +17,7 @@ export function ISSUE_OPENED_MESSAGE({
 	issue,
 	repository,
 }: IssueOpenedMessageOptions): ContainerBuilder {
-	const { body: issueBody, title: issueTitle } = issue;
+	const { body: issueBody, number: issueNumber, title: issueTitle, url: issueUrl } = issue;
 	const { fullName: repositoryFullName, url: repositoryUrl } = repository;
 
 	const repositoryHyperlink = formatRepositoryHyperlink(repositoryFullName, repositoryUrl);
@@ -24,15 +25,16 @@ export function ISSUE_OPENED_MESSAGE({
 	const containerBuilder = new ContainerBuilder();
 	const containerSeparatorBuilder = new SeparatorBuilder();
 	const containerTitleBuilder = new TextDisplayBuilder();
+	const containerSubtitleBuilder = new TextDisplayBuilder();
 
 	containerTitleBuilder.setContent(
-		heading(
-			`${ISSUE_OPENED_EMOJI} ${repositoryHyperlink} - Issue Opened: ${issueTitle}`,
-			HeadingLevel.Three,
-		),
+		heading(`${ISSUE_OPENED_EMOJI} ${repositoryHyperlink}: Issue Opened`, HeadingLevel.Two),
+	);
+	containerSubtitleBuilder.setContent(
+		heading(hyperlink(`[Issue #${issueNumber}] ${issueTitle}`, issueUrl), HeadingLevel.Three),
 	);
 
-	containerBuilder.addTextDisplayComponents(containerTitleBuilder);
+	containerBuilder.addTextDisplayComponents(containerTitleBuilder, containerSubtitleBuilder);
 	containerBuilder.setAccentColor(GREEN_COLOR);
 
 	if (issueBody) {

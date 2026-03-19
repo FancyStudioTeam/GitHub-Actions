@@ -1,6 +1,7 @@
 import type { components } from '@octokit/openapi-types';
 export interface GitHubIssue {
     body: string | null;
+    number: number;
     title: string;
     url: string;
 }
