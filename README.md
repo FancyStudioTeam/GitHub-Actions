@@ -2,38 +2,12 @@
 
 A collection of custom GitHub Actions used in FancyStudio.
 
----
+## ℹ️ Information
 
-## ✨ Getting Started
+This GitHub Action executes a Discord webhook when a GitHub event is triggered. You must specify the events you want the GitHub Action to listen in the [`on`](https://docs.github.com/es/actions/reference/workflows-and-actions/workflow-syntax#on) property.
 
-```yaml
-name: Send GitHub Events to Discord
+## 📋 Available Events:
 
-on:
-    issues:
-        types: [opened, closed]
-    push:
-
-jobs:
-    discord-webhooks:
-        runs-on: ubuntu-latest
-
-        steps:
-            - name: Checkout Code
-              uses: actions/checkout@v6
-
-            - name: Execute Discord Webhooks
-              uses: FancyStudioTeam/GitHub-Actions@main
-              with:
-                  webhook_id: ${{ secrets.DISCORD_WEBHOOK_ID }}
-                  webhook_token: ${{ secrets.DISCORD_WEBHOOK_TOKEN }}
-```
-
-## ℹ️ API
-
-### ⚙️ GitHub Action Options
-
-| Option          | Description                       | Required |
-| --------------- | --------------------------------- | -------- |
-| `webhook_id`    | The ID of the Discord webhook.    | `✅`     |
-| `webhook_token` | The token of the Discord webhook. | `✅`     |
+- [ ] **Issues**:
+    - [x] **Closed**
+    - [x] **Opened**
