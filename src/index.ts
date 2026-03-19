@@ -2,14 +2,14 @@ import { getInput, setFailed } from '@actions/core';
 import { context } from '@actions/github';
 import type { ContainerBuilder } from '@discordjs/builders';
 
-import { ISSUE_CLOSED_MESSAGE } from './lib/messages/issues/IssueClosed.js';
-import { ISSUE_OPENED_MESSAGE } from './lib/messages/issues/IssueOpened.js';
+import { ISSUE_CLOSED_MESSAGE } from './events/issues/IssueClosed.js';
+import { ISSUE_OPENED_MESSAGE } from './events/issues/IssueOpened.js';
 import { WebhookClient } from './structures/WebhookClient.js';
 import type { GitHubIssue, GitHubRepository } from './types/GitHub.js';
 import { parseGitHubIssue } from './utils/parser/parseGitHubIssue.js';
 import { parseGitHubRepository } from './utils/parser/parseGitHubRepository.js';
 
-async function run() {
+async function run(): Promise<void> {
 	try {
 		const webhookId = getInput('webhook_id');
 		const webhookToken = getInput('webhook_token');

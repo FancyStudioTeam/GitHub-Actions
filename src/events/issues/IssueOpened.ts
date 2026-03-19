@@ -5,7 +5,6 @@ import {
 	HeadingLevel,
 	heading,
 	hyperlink,
-	SeparatorBuilder,
 	TextDisplayBuilder,
 } from '@discordjs/builders';
 
@@ -36,11 +35,8 @@ export function ISSUE_OPENED_MESSAGE({ issue, repository }: IssueMessageOptions)
 
 	if (issueBody) {
 		const containerBodyBuilder = new TextDisplayBuilder();
-		const containerSeparatorBuilder = new SeparatorBuilder();
 
 		containerBodyBuilder.setContent(issueBody);
-
-		containerBuilder.addSeparatorComponents(containerSeparatorBuilder);
 		containerBuilder.addTextDisplayComponents(containerBodyBuilder);
 	}
 
