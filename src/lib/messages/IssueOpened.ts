@@ -2,11 +2,9 @@
 
 import {
 	ContainerBuilder,
-	escapeInlineCode,
 	HeadingLevel,
 	heading,
 	hyperlink,
-	inlineCode,
 	SeparatorBuilder,
 	TextDisplayBuilder,
 } from '@discordjs/builders';
@@ -21,8 +19,6 @@ export function ISSUE_OPENED_MESSAGE({
 	const { body: issueBody, number: issueNumber, title: issueTitle, url: issueUrl } = issue;
 	const { fullName: repositoryFullName } = repository;
 
-	const formattedRepositoryFullName = inlineCode(escapeInlineCode(repositoryFullName));
-
 	const containerBuilder = new ContainerBuilder();
 	const containerSeparatorBuilder = new SeparatorBuilder();
 	const containerTitleBuilder = new TextDisplayBuilder();
@@ -30,7 +26,7 @@ export function ISSUE_OPENED_MESSAGE({
 	containerTitleBuilder.setContent(
 		heading(
 			hyperlink(
-				`${ISSUE_OPENED_EMOJI} [Issue #${issueNumber}] ${formattedRepositoryFullName}: ${issueTitle}`,
+				`${ISSUE_OPENED_EMOJI} [${repositoryFullName} - Issue #${issueNumber}]: ${issueTitle}`,
 				issueUrl,
 			),
 			HeadingLevel.Three,
