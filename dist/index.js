@@ -49182,10 +49182,6 @@ function embedLength(data) {
 }
 __name(embedLength, "embedLength");
 
-function formatRepositoryHyperlink(repositoryFullName, repositoryUrl) {
-    return hyperlink(inlineCode(escapeInlineCode(repositoryFullName)), repositoryUrl);
-}
-
 const GREEN_COLOR = 0x1a7f37;
 
 const ISSUE_OPENED_EMOJI = '<:_:1483983242527899738>';
@@ -49193,12 +49189,12 @@ const ISSUE_OPENED_EMOJI = '<:_:1483983242527899738>';
 /* biome-ignore-all lint/style/useNamingConvention: (x) */
 function ISSUE_OPENED_MESSAGE({ issue, repository, }) {
     const { body: issueBody, number: issueNumber, title: issueTitle, url: issueUrl } = issue;
-    const { fullName: repositoryFullName, url: repositoryUrl } = repository;
-    const repositoryHyperlink = formatRepositoryHyperlink(repositoryFullName, repositoryUrl);
+    const { fullName: repositoryFullName } = repository;
+    const formattedRepositoryFullName = inlineCode(escapeInlineCode(repositoryFullName));
     const containerBuilder = new ContainerBuilder();
     const containerSeparatorBuilder = new SeparatorBuilder();
     const containerTitleBuilder = new TextDisplayBuilder();
-    containerTitleBuilder.setContent(heading(hyperlink(`${ISSUE_OPENED_EMOJI} [${repositoryHyperlink}] (Issue #${issueNumber}): ${issueTitle}`, issueUrl), HeadingLevel.Three));
+    containerTitleBuilder.setContent(heading(hyperlink(`${ISSUE_OPENED_EMOJI} [${formattedRepositoryFullName}] (Issue #${issueNumber}): ${issueTitle}`, issueUrl), HeadingLevel.Three));
     containerBuilder.addTextDisplayComponents(containerTitleBuilder);
     containerBuilder.setAccentColor(GREEN_COLOR);
     if (issueBody) {

@@ -2,14 +2,15 @@
 
 import {
 	ContainerBuilder,
+	escapeInlineCode,
 	HeadingLevel,
 	heading,
 	hyperlink,
+	inlineCode,
 	SeparatorBuilder,
 	TextDisplayBuilder,
 } from '@discordjs/builders';
 import type { GitHubIssue, GitHubRepository } from '#/types/GitHub.js';
-import { formatRepositoryHyperlink } from '#/utils/markdown/formatRepositoryHyperlink.js';
 import { GREEN_COLOR } from '../Colors.js';
 import { ISSUE_OPENED_EMOJI } from '../Emojis.js';
 
@@ -18,9 +19,9 @@ export function ISSUE_OPENED_MESSAGE({
 	repository,
 }: IssueOpenedMessageOptions): ContainerBuilder {
 	const { body: issueBody, number: issueNumber, title: issueTitle, url: issueUrl } = issue;
-	const { fullName: repositoryFullName, url: repositoryUrl } = repository;
+	const { fullName: repositoryFullName } = repository;
 
-	const repositoryHyperlink = formatRepositoryHyperlink(repositoryFullName, repositoryUrl);
+	const formattedRepositoryFullName = inlineCode(escapeInlineCode(repositoryFullName));
 
 	const containerBuilder = new ContainerBuilder();
 	const containerSeparatorBuilder = new SeparatorBuilder();
@@ -29,7 +30,7 @@ export function ISSUE_OPENED_MESSAGE({
 	containerTitleBuilder.setContent(
 		heading(
 			hyperlink(
-				`${ISSUE_OPENED_EMOJI} [${repositoryHyperlink}] (Issue #${issueNumber}): ${issueTitle}`,
+				`${ISSUE_OPENED_EMOJI} [${formattedRepositoryFullName}] (Issue #${issueNumber}): ${issueTitle}`,
 				issueUrl,
 			),
 			HeadingLevel.Three,
