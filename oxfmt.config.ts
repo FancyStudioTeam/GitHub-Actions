@@ -15,6 +15,9 @@ export default defineConfig({
 		newlinesBetween: true,
 		order: 'asc',
 	},
+	sortPackageJson: {
+		sortScripts: true,
+	},
 	tabWidth: 4,
 	useTabs: true,
 });

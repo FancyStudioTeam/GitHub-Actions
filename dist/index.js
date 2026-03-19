@@ -48345,7 +48345,7 @@ const PURPLE_COLOR = 0x8250df;const ISSUE_CLOSED_EMOJI = '<:_:148400439258696912
 const ISSUE_OPENED_EMOJI = '<:_:1483983242527899738>';/* biome-ignore-all lint/style/useNamingConvention: (x) */
 function ISSUE_CLOSED_MESSAGE({ issue, repository }) {
     const { number: issueNumber, title: issueTitle, url: issueUrl } = issue;
-    const { fullName: repositoryFullName } = repository;
+    const { full_name: repositoryFullName } = repository;
     const containerBuilder = new ContainerBuilder();
     const containerTitleBuilder = new TextDisplayBuilder();
     containerTitleBuilder.setContent(heading(hyperlink(`${ISSUE_CLOSED_EMOJI} [${repositoryFullName}] (Issue #${issueNumber}) ${issueTitle}`, issueUrl), HeadingLevel.Three));
@@ -48355,7 +48355,7 @@ function ISSUE_CLOSED_MESSAGE({ issue, repository }) {
 }/* biome-ignore-all lint/style/useNamingConvention: (x) */
 function ISSUE_OPENED_MESSAGE({ issue, repository }) {
     const { body: issueBody, number: issueNumber, title: issueTitle, url: issueUrl } = issue;
-    const { fullName: repositoryFullName } = repository;
+    const { full_name: repositoryFullName } = repository;
     const containerBuilder = new ContainerBuilder();
     const containerTitleBuilder = new TextDisplayBuilder();
     containerTitleBuilder.setContent(heading(hyperlink(`${ISSUE_OPENED_EMOJI} [${repositoryFullName}] (Issue #${issueNumber}) ${issueTitle}`, issueUrl), HeadingLevel.Three));
@@ -48363,9 +48363,7 @@ function ISSUE_OPENED_MESSAGE({ issue, repository }) {
     containerBuilder.setAccentColor(GREEN_COLOR);
     if (issueBody) {
         const containerBodyBuilder = new TextDisplayBuilder();
-        const containerSeparatorBuilder = new SeparatorBuilder();
         containerBodyBuilder.setContent(issueBody);
-        containerBuilder.addSeparatorComponents(containerSeparatorBuilder);
         containerBuilder.addTextDisplayComponents(containerBodyBuilder);
     }
     return containerBuilder;
@@ -48396,25 +48394,6 @@ function ISSUE_OPENED_MESSAGE({ issue, repository }) {
             method: 'POST',
         });
     }
-}function parseGitHubIssue(payload) {
-    const { issue } = payload;
-    const { body, html_url, number, title } = issue;
-    const gitHubIssue = {
-        body: body || null,
-        number,
-        title,
-        url: html_url,
-    };
-    return gitHubIssue;
-}function parseGitHubRepository(payload) {
-    const { repository } = payload;
-    const { full_name, html_url, name } = repository;
-    const gitHubRepository = {
-        fullName: full_name,
-        name,
-        url: html_url,
-    };
-    return gitHubRepository;
 }async function run() {
     try {
         const webhookId = getInput('webhook_id');
@@ -48427,12 +48406,13 @@ function ISSUE_OPENED_MESSAGE({ issue, repository }) {
         });
         switch (eventName) {
             case 'issues': {
-                const { action } = payload;
+                const { action, issue, repository } = payload;
                 if (!action) {
                     return setFailed('Cannot handle issue without an action');
                 }
-                const issue = parseGitHubIssue(payload);
-                const repository = parseGitHubRepository(payload);
+                if (!issue || !repository) {
+                    return setFailed('Cannot handle issue without an issue or repository object');
+                }
                 const messages = {
                     closed: ISSUE_CLOSED_MESSAGE,
                     opened: ISSUE_OPENED_MESSAGE,
@@ -48440,8 +48420,8 @@ function ISSUE_OPENED_MESSAGE({ issue, repository }) {
                 const message = messages[action];
                 if (message) {
                     await webhook.execute(message({
-                        issue,
-                        repository,
+                        issue: issue,
+                        repository: repository,
                     }));
                 }
             }
