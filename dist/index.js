@@ -48503,9 +48503,10 @@ const PushEventHandler = Object.freeze({
 const { webhook } = Routes;
 var HttpStatusCode;
 (function (HttpStatusCode) {
+    HttpStatusCode[HttpStatusCode["BadRequest"] = 400] = "BadRequest";
+    HttpStatusCode[HttpStatusCode["NotAuthorized"] = 401] = "NotAuthorized";
     HttpStatusCode[HttpStatusCode["NotFound"] = 404] = "NotFound";
     HttpStatusCode[HttpStatusCode["Ok"] = 200] = "Ok";
-    HttpStatusCode[HttpStatusCode["Unauthorized"] = 401] = "Unauthorized";
 })(HttpStatusCode || (HttpStatusCode = {}));
 class WebhookClient {
     webhookId;
@@ -48535,16 +48536,20 @@ class WebhookClient {
         const { status } = response;
         switch (status) {
             case HttpStatusCode.Ok: {
-                return info('Webhook message has been created successfully');
+                return info('✅ The webhook was executed successfully');
+            }
+            case HttpStatusCode.BadRequest: {
+                const responseJson = await response.json();
+                return setFailed(`❌ ${JSON.stringify(responseJson, null, 4)}`);
+            }
+            case HttpStatusCode.NotAuthorized: {
+                return setFailed('❌ The webhook was not authorized [Error 401]');
             }
             case HttpStatusCode.NotFound: {
-                return setFailed('Webhook has not been found');
-            }
-            case HttpStatusCode.Unauthorized: {
-                return setFailed('Webhook has been unauthorized');
+                return setFailed('❌ The webhook was not found [Error 404]');
             }
             default: {
-                return setFailed('Something went wrong while executing the webhook');
+                return setFailed('❌ Something went wrong while executing the webhook');
             }
         }
     }
