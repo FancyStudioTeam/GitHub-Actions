@@ -73,6 +73,8 @@ export class IssueOpenedEventHandler {
 			const containerSeparatorBuilder = new SeparatorBuilder();
 			const containerBodyBuilder = new TextDisplayBuilder();
 
+			containerBodyBuilder.setContent(issueBody);
+
 			containerBuilder.addSeparatorComponents(containerSeparatorBuilder);
 			containerBuilder.addTextDisplayComponents(containerBodyBuilder);
 		}

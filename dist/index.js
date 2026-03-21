@@ -48397,6 +48397,7 @@ const PURPLE_COLOR = 0x6366f1;class IssueClosedEventHandler {
         if (issueBody) {
             const containerSeparatorBuilder = new SeparatorBuilder();
             const containerBodyBuilder = new TextDisplayBuilder();
+            containerBodyBuilder.setContent(issueBody);
             containerBuilder.addSeparatorComponents(containerSeparatorBuilder);
             containerBuilder.addTextDisplayComponents(containerBodyBuilder);
         }
