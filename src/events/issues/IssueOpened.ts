@@ -11,6 +11,7 @@ import {
 } from '@discordjs/builders';
 import type { IssuesOpenedEvent } from '@octokit/webhooks-types';
 import { ISSUE_OPENED_EMOJI } from '#/lib/Emojis.js';
+import { GREEN_COLOR } from '#/lib/Colors.js';
 
 export const IssueOpenedEventHandler = Object.freeze({
 	appendBodyToContainer(containerBuilder: ContainerBuilder, issueBody?: string | null): void {
@@ -84,6 +85,7 @@ export const IssueOpenedEventHandler = Object.freeze({
 		const containerTitleBuilder = this.createTitleBuilder(issueOpenedEvent);
 		const containerSubtitleBuilder = this.createSubtitleBuilder(issueOpenedEvent);
 
+		containerBuilder.setAccentColor(GREEN_COLOR);
 		containerBuilder.addTextDisplayComponents(containerTitleBuilder, containerSubtitleBuilder);
 
 		this.appendBodyToContainer(containerBuilder, issueBody);
