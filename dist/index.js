@@ -48403,11 +48403,27 @@ const REPO_PUSH = '<:_:1484953588789940426>';const IssueClosedEventHandler = Obj
         }
         return containerBuilder;
     }
-}const PushEventHandler = Object.freeze({
-    _createContainerTitleBuilder(pushEvent) {
-        const containerTitleString = this._formatContainerTitle(pushEvent);
-        const containerTitleBuilder = new TextDisplayBuilder().setContent(containerTitleString);
-        return containerTitleBuilder;
+}const GITHUB_COMMIT_HASH_LENGTH = 7;
+const PushEventHandler = Object.freeze({
+    _createCommitBuilder(commit) {
+        const { message: commitMessage, url: commitUrl } = commit;
+        const commitBuilder = new SectionBuilder();
+        const commitDataBuilder = new TextDisplayBuilder();
+        const commitButtonBuilder = new ButtonBuilder();
+        const title = escapeBold(commitMessage);
+        commitDataBuilder.setContent(bold(title));
+        commitButtonBuilder.setStyle(ButtonStyle.Link);
+        commitButtonBuilder.setLabel('Link');
+        commitButtonBuilder.setURL(commitUrl);
+        commitBuilder.addTextDisplayComponents(commitDataBuilder);
+        commitBuilder.setButtonAccessory(commitButtonBuilder);
+        return commitBuilder;
+    },
+    _createTitleBuilder(pushEvent) {
+        const titleString = this._formatContainerTitle(pushEvent);
+        const titleBuilder = new TextDisplayBuilder();
+        titleBuilder.setContent(titleString);
+        return titleBuilder;
     },
     _formatContainerTitle(pushEvent) {
         const { commits, compare, ref, repository } = pushEvent;
@@ -48422,10 +48438,18 @@ const REPO_PUSH = '<:_:1484953588789940426>';const IssueClosedEventHandler = Obj
         const branch = references.at(-1);
         return branch ?? 'unknown';
     },
+    _formatGitHubCommitHash(idString) {
+        return idString.slice(0, GITHUB_COMMIT_HASH_LENGTH);
+    },
     handle(pushEvent) {
+        const { commits } = pushEvent;
         const containerBuilder = new ContainerBuilder();
-        const containerTitleBuilder = this._createContainerTitleBuilder(pushEvent);
+        const containerTitleBuilder = this._createTitleBuilder(pushEvent);
         containerBuilder.addTextDisplayComponents(containerTitleBuilder);
+        for (const commit of commits) {
+            const containerCommitBuilder = this._createCommitBuilder(commit);
+            containerBuilder.addSectionComponents(containerCommitBuilder);
+        }
         return containerBuilder;
     },
 });class WebhookClient {
