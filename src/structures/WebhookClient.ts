@@ -2,15 +2,15 @@ import type { ContainerBuilder } from '@discordjs/builders';
 import { MessageFlags } from 'discord-api-types/v10';
 
 export class WebhookClient {
-	readonly webhookId: string;
-	readonly webhookToken: string;
+	public readonly webhookId: string;
+	public readonly webhookToken: string;
 
 	constructor(webhookId: string, webhookToken: string) {
 		this.webhookId = webhookId;
 		this.webhookToken = webhookToken;
 	}
 
-	private _createRequestUrl(): URL {
+	private createRequestUrl(): URL {
 		const { webhookId, webhookToken } = this;
 
 		const url = new URL(`https://discord.com/api/v10/webhooks/${webhookId}/${webhookToken}`);
@@ -22,11 +22,13 @@ export class WebhookClient {
 	}
 
 	public async execute(containerBuilder: ContainerBuilder): Promise<void> {
-		const url = this._createRequestUrl();
+		const url = this.createRequestUrl();
 
 		await fetch(url, {
 			body: JSON.stringify({
-				components: [containerBuilder],
+				components: [
+					containerBuilder,
+				],
 				flags: MessageFlags.IsComponentsV2,
 			}),
 			headers: {
