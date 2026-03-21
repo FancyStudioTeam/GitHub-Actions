@@ -11,11 +11,10 @@ import {
 } from '@discordjs/builders';
 import { IssuesOpenedEvent } from '@octokit/webhooks-types';
 
-import { GREEN_COLOR } from '#/lib/Colors.js';
 import { ISSUE_OPENED_EMOJI } from '#/lib/Emojis.js';
 
 export class IssueOpenedEventHandler {
-	private static _createContainerSubtitle(
+	private static _createContainerSubtitleBuilder(
 		issueOpenedEvent: IssuesOpenedEvent,
 	): TextDisplayBuilder {
 		const containerSubtitleString =
@@ -27,7 +26,9 @@ export class IssueOpenedEventHandler {
 		return containerSubtitleBuilder;
 	}
 
-	private static _createContainerTitle(issueOpenedEvent: IssuesOpenedEvent): TextDisplayBuilder {
+	private static _createContainerTitleBuilder(
+		issueOpenedEvent: IssuesOpenedEvent,
+	): TextDisplayBuilder {
 		const containerTitleString =
 			IssueOpenedEventHandler._formatContainerTitle(issueOpenedEvent);
 		const containerTitleBuilder = new TextDisplayBuilder().setContent(containerTitleString);
@@ -63,11 +64,10 @@ export class IssueOpenedEventHandler {
 		const containerBuilder = new ContainerBuilder();
 
 		const containerTitleBuilder =
-			IssueOpenedEventHandler._createContainerTitle(issueOpenedEvent);
+			IssueOpenedEventHandler._createContainerTitleBuilder(issueOpenedEvent);
 		const containerSubtitleBuilder =
-			IssueOpenedEventHandler._createContainerSubtitle(issueOpenedEvent);
+			IssueOpenedEventHandler._createContainerSubtitleBuilder(issueOpenedEvent);
 
-		containerBuilder.setAccentColor(GREEN_COLOR);
 		containerBuilder.addTextDisplayComponents(containerTitleBuilder, containerSubtitleBuilder);
 
 		if (issueBody) {

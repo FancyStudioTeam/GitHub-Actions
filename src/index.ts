@@ -5,6 +5,7 @@ import { IssuesEvent } from '@octokit/webhooks-types';
 
 import { IssueClosedEventHandler } from './events/issues/IssueClosed.js';
 import { IssueOpenedEventHandler } from './events/issues/IssueOpened.js';
+import { PushEventHandler } from './events/Push.js';
 import { WebhookClient } from './structures/WebhookClient.js';
 
 async function run(): Promise<void> {
@@ -34,6 +35,9 @@ async function run(): Promise<void> {
 				if (message) {
 					await webhook.execute(message(payload as never));
 				}
+			}
+			case 'push': {
+				await webhook.execute(PushEventHandler.handle(payload as never));
 			}
 		}
 	} catch (error) {
