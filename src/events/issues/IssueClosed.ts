@@ -1,47 +1,48 @@
 import {
 	ContainerBuilder,
+	escapeMarkdown,
 	HeadingLevel,
 	heading,
 	hyperlink,
 	TextDisplayBuilder,
-	escapeMarkdown,
 } from '@discordjs/builders';
-import { IssuesClosedEvent } from '@octokit/webhooks-types';
-
+import type { IssuesClosedEvent } from '@octokit/webhooks-types';
 import { PURPLE_COLOR } from '#/lib/Colors.js';
 import { ISSUE_CLOSED_EMOJI } from '#/lib/Emojis.js';
 
-export class IssueClosedEventHandler {
-	private static _createContainerTitle(issueClosedEvent: IssuesClosedEvent): TextDisplayBuilder {
-		const containerTitleString =
-			IssueClosedEventHandler._formatContainerTitle(issueClosedEvent);
-		const containerTitleBuilder = new TextDisplayBuilder().setContent(containerTitleString);
+export const IssueClosedEventHandler = Object.freeze({
+	createContainerBuilder(): ContainerBuilder {
+		return new ContainerBuilder();
+	},
 
-		return containerTitleBuilder;
-	}
+	createTitleBuilder(issueClosedEvent: IssuesClosedEvent): TextDisplayBuilder {
+		const titleString = this.formatContainerTitle(issueClosedEvent);
+		const titleBuilder = new TextDisplayBuilder();
 
-	private static _formatContainerTitle(issueClosedEvent: IssuesClosedEvent): string {
-		const { issue, repository, sender } = issueClosedEvent;
+		titleBuilder.setContent(titleString);
 
+		return titleBuilder;
+	},
+
+	formatContainerTitle({ issue, repository, sender }: IssuesClosedEvent): string {
 		const { html_url: issueHtmlUrl, number: issueNumber } = issue;
-		const { full_name: repositoryFullName } = repository;
+		const { name: repositoryName } = repository;
 		const { login: senderLogin } = sender;
 
-		const title = escapeMarkdown(
-			`${ISSUE_CLOSED_EMOJI} [${repositoryFullName}] ${senderLogin} has Closed Issue #${issueNumber}`,
+		const formattedTitle = escapeMarkdown(
+			`${ISSUE_CLOSED_EMOJI} [${repositoryName}] ${senderLogin} has Closed Issue #${issueNumber}`,
 		);
 
-		return heading(hyperlink(title, issueHtmlUrl), HeadingLevel.Three);
-	}
+		return heading(hyperlink(formattedTitle, issueHtmlUrl), HeadingLevel.Three);
+	},
 
-	public static handle(issueClosedEvent: IssuesClosedEvent): ContainerBuilder {
-		const containerBuilder = new ContainerBuilder();
-		const containerTitleBuilder =
-			IssueClosedEventHandler._createContainerTitle(issueClosedEvent);
+	handle(issueClosedEvent: IssuesClosedEvent): ContainerBuilder {
+		const containerBuilder = this.createContainerBuilder();
+		const containerTitleBuilder = this.createTitleBuilder(issueClosedEvent);
 
 		containerBuilder.setAccentColor(PURPLE_COLOR);
 		containerBuilder.addTextDisplayComponents(containerTitleBuilder);
 
 		return containerBuilder;
-	}
-}
+	},
+});

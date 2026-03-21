@@ -29,9 +29,9 @@ const GitHubUtils = Object.freeze({
 });
 
 export const PushEventHandler = Object.freeze({
-	_appendCommitsToContainer(containerBuilder: ContainerBuilder, commits: Commit[]): void {
+	appendCommitsToContainer(containerBuilder: ContainerBuilder, commits: Commit[]): void {
 		const containerCommits: string[] = [];
-		const containerCommitsBuilder = new TextDisplayBuilder();
+		const containerCommitsBuilder = this.createTextDisplayBuilder();
 
 		for (const { id: commitId, message: commitMessage, url: commitUrl } of commits) {
 			const formattedCommitId = GitHubUtils.formatCommitId(commitId);
@@ -46,24 +46,28 @@ export const PushEventHandler = Object.freeze({
 		containerBuilder.addTextDisplayComponents(containerCommitsBuilder);
 	},
 
-	_createContainerBuilder(): ContainerBuilder {
+	createContainerBuilder(): ContainerBuilder {
 		return new ContainerBuilder();
 	},
 
-	_createSeparatorBuilder(): SeparatorBuilder {
+	createSeparatorBuilder(): SeparatorBuilder {
 		return new SeparatorBuilder();
 	},
 
-	_createTitleBuilder(pushEvent: PushEvent): TextDisplayBuilder {
-		const titleString = this._formatContainerTitle(pushEvent);
-		const titleBuilder = new TextDisplayBuilder();
+	createTextDisplayBuilder(): TextDisplayBuilder {
+		return new TextDisplayBuilder();
+	},
+
+	createTitleBuilder(pushEvent: PushEvent): TextDisplayBuilder {
+		const titleString = this.formatContainerTitle(pushEvent);
+		const titleBuilder = this.createTextDisplayBuilder();
 
 		titleBuilder.setContent(titleString);
 
 		return titleBuilder;
 	},
 
-	_formatContainerTitle({ commits, compare, ref, repository }: PushEvent): string {
+	formatContainerTitle({ commits, compare, ref, repository }: PushEvent): string {
 		const { length: commitsLength } = commits;
 		const { name: repositoryName } = repository;
 
@@ -78,14 +82,14 @@ export const PushEventHandler = Object.freeze({
 	handle(pushEvent: PushEvent): ContainerBuilder {
 		const { commits } = pushEvent;
 
-		const containerBuilder = this._createContainerBuilder();
-		const containerTitleBuilder = this._createTitleBuilder(pushEvent);
-		const containerSeparatorBuilder = this._createSeparatorBuilder();
+		const containerBuilder = this.createContainerBuilder();
+		const containerTitleBuilder = this.createTitleBuilder(pushEvent);
+		const containerSeparatorBuilder = this.createSeparatorBuilder();
 
 		containerBuilder.addTextDisplayComponents(containerTitleBuilder);
 		containerBuilder.addSeparatorComponents(containerSeparatorBuilder);
 
-		this._appendCommitsToContainer(containerBuilder, commits);
+		this.appendCommitsToContainer(containerBuilder, commits);
 
 		return containerBuilder;
 	},

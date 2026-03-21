@@ -1,85 +1,93 @@
 import {
+	bold,
 	ContainerBuilder,
+	escapeBold,
+	escapeMarkdown,
 	HeadingLevel,
 	heading,
 	hyperlink,
-	TextDisplayBuilder,
-	bold,
-	escapeBold,
-	escapeMarkdown,
 	SeparatorBuilder,
+	TextDisplayBuilder,
 } from '@discordjs/builders';
-import { IssuesOpenedEvent } from '@octokit/webhooks-types';
-
+import type { IssuesOpenedEvent } from '@octokit/webhooks-types';
 import { ISSUE_OPENED_EMOJI } from '#/lib/Emojis.js';
 
-export class IssueOpenedEventHandler {
-	private static _createContainerSubtitleBuilder(
-		issueOpenedEvent: IssuesOpenedEvent,
-	): TextDisplayBuilder {
-		const containerSubtitleString =
-			IssueOpenedEventHandler._formatContainerSubtitle(issueOpenedEvent);
-		const containerSubtitleBuilder = new TextDisplayBuilder().setContent(
-			containerSubtitleString,
-		);
-
-		return containerSubtitleBuilder;
-	}
-
-	private static _createContainerTitleBuilder(
-		issueOpenedEvent: IssuesOpenedEvent,
-	): TextDisplayBuilder {
-		const containerTitleString =
-			IssueOpenedEventHandler._formatContainerTitle(issueOpenedEvent);
-		const containerTitleBuilder = new TextDisplayBuilder().setContent(containerTitleString);
-
-		return containerTitleBuilder;
-	}
-
-	private static _formatContainerSubtitle(issueOpenedEvent: IssuesOpenedEvent): string {
-		const { issue } = issueOpenedEvent;
-		const { title: issueTitle } = issue;
-
-		return bold(escapeBold(issueTitle));
-	}
-
-	private static _formatContainerTitle(issueOpenedEvent: IssuesOpenedEvent): string {
-		const { issue, repository, sender } = issueOpenedEvent;
-
-		const { html_url: issueHtmlUrl, number: issueNumber } = issue;
-		const { full_name: repositoryFullName } = repository;
-		const { login: senderLogin } = sender;
-
-		const title = escapeMarkdown(
-			`${ISSUE_OPENED_EMOJI} [${repositoryFullName}] ${senderLogin} has Opened Issue #${issueNumber}`,
-		);
-
-		return heading(hyperlink(title, issueHtmlUrl), HeadingLevel.Three);
-	}
-
-	public static handle(issueOpenedEvent: IssuesOpenedEvent): ContainerBuilder {
-		const { issue } = issueOpenedEvent;
-		const { body: issueBody } = issue;
-
-		const containerBuilder = new ContainerBuilder();
-
-		const containerTitleBuilder =
-			IssueOpenedEventHandler._createContainerTitleBuilder(issueOpenedEvent);
-		const containerSubtitleBuilder =
-			IssueOpenedEventHandler._createContainerSubtitleBuilder(issueOpenedEvent);
-
-		containerBuilder.addTextDisplayComponents(containerTitleBuilder, containerSubtitleBuilder);
-
+export const IssueOpenedEventHandler = Object.freeze({
+	appendBodyToContainer(containerBuilder: ContainerBuilder, issueBody?: string | null): void {
 		if (issueBody) {
-			const containerSeparatorBuilder = new SeparatorBuilder();
-			const containerBodyBuilder = new TextDisplayBuilder();
+			const containerSeparatorBuilder = this.createSeparatorBuilder();
+			const containerBodyBuilder = this.createTextDisplayBuilder();
 
 			containerBodyBuilder.setContent(issueBody);
 
 			containerBuilder.addSeparatorComponents(containerSeparatorBuilder);
 			containerBuilder.addTextDisplayComponents(containerBodyBuilder);
 		}
+	},
+
+	createContainerBuilder(): ContainerBuilder {
+		return new ContainerBuilder();
+	},
+
+	createSeparatorBuilder(): SeparatorBuilder {
+		return new SeparatorBuilder();
+	},
+
+	createSubtitleBuilder(issueOpenedEvent: IssuesOpenedEvent): TextDisplayBuilder {
+		const subtitleString = this.formatContainerSubtitle(issueOpenedEvent);
+		const subtitleBuilder = this.createTextDisplayBuilder();
+
+		subtitleBuilder.setContent(subtitleString);
+
+		return subtitleBuilder;
+	},
+
+	createTextDisplayBuilder(): TextDisplayBuilder {
+		return new TextDisplayBuilder();
+	},
+
+	createTitleBuilder(issueOpenedEvent: IssuesOpenedEvent): TextDisplayBuilder {
+		const titleString = this.formatContainerTitle(issueOpenedEvent);
+		const titleBuilder = this.createTextDisplayBuilder();
+
+		titleBuilder.setContent(titleString);
+
+		return titleBuilder;
+	},
+
+	formatContainerSubtitle(issueOpenedEvent: IssuesOpenedEvent): string {
+		const { issue } = issueOpenedEvent;
+		const { title: issueTitle } = issue;
+
+		return bold(escapeBold(issueTitle));
+	},
+
+	formatContainerTitle(issueOpenedEvent: IssuesOpenedEvent): string {
+		const { issue, repository, sender } = issueOpenedEvent;
+
+		const { html_url: issueHtmlUrl, number: issueNumber } = issue;
+		const { name: repositoryName } = repository;
+		const { login: senderLogin } = sender;
+
+		const formattedTitle = escapeMarkdown(
+			`${ISSUE_OPENED_EMOJI} [${repositoryName}] ${senderLogin} has Opened Issue #${issueNumber}`,
+		);
+
+		return heading(hyperlink(formattedTitle, issueHtmlUrl), HeadingLevel.Three);
+	},
+
+	handle(issueOpenedEvent: IssuesOpenedEvent): ContainerBuilder {
+		const { issue } = issueOpenedEvent;
+		const { body: issueBody } = issue;
+
+		const containerBuilder = this.createContainerBuilder();
+		const containerTitleBuilder = this.createTitleBuilder(issueOpenedEvent);
+		const containerSubtitleBuilder = this.createSubtitleBuilder(issueOpenedEvent);
+
+		containerBuilder.addTextDisplayComponents(containerTitleBuilder, containerSubtitleBuilder);
+
+		this.appendBodyToContainer(containerBuilder, issueBody);
 
 		return containerBuilder;
-	}
-}
+	},
+});
