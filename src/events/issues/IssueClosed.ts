@@ -1,36 +1,46 @@
-/* biome-ignore-all lint/style/useNamingConvention: (x) */
-
 import {
 	ContainerBuilder,
 	HeadingLevel,
 	heading,
 	hyperlink,
 	TextDisplayBuilder,
+	escapeMarkdown,
 } from '@discordjs/builders';
 import { IssuesClosedEvent } from '@octokit/webhooks-types';
 
 import { PURPLE_COLOR } from '#/lib/Colors.js';
-import { ISSUE_CLOSED_EMOJI } from '#/lib/Emojis.js';
 
-export function ISSUE_CLOSED_MESSAGE({ issue, repository }: IssuesClosedEvent): ContainerBuilder {
-	const { number: issueNumber, title: issueTitle, url: issueUrl } = issue;
-	const { full_name: repositoryFullName } = repository;
+export class IssueClosedEventHandler {
+	private static _createContainerTitle(issueClosedEvent: IssuesClosedEvent): TextDisplayBuilder {
+		const containerTitleString =
+			IssueClosedEventHandler._formatContainerTitle(issueClosedEvent);
+		const containerTitleBuilder = new TextDisplayBuilder().setContent(containerTitleString);
 
-	const containerBuilder = new ContainerBuilder();
-	const containerTitleBuilder = new TextDisplayBuilder();
+		return containerTitleBuilder;
+	}
 
-	containerTitleBuilder.setContent(
-		heading(
-			hyperlink(
-				`${ISSUE_CLOSED_EMOJI} [${repositoryFullName}] (Issue #${issueNumber}) ${issueTitle}`,
-				issueUrl,
-			),
-			HeadingLevel.Three,
-		),
-	);
+	private static _formatContainerTitle(issueClosedEvent: IssuesClosedEvent): string {
+		const { issue, repository, sender } = issueClosedEvent;
 
-	containerBuilder.addTextDisplayComponents(containerTitleBuilder);
-	containerBuilder.setAccentColor(PURPLE_COLOR);
+		const { html_url: issueHtmlUrl, number: issueNumber } = issue;
+		const { name: repositoryName } = repository;
+		const { login: senderLogin } = sender;
 
-	return containerBuilder;
+		const title = escapeMarkdown(
+			`[${repositoryName}] ${senderLogin} has Closed Issue #${issueNumber}`,
+		);
+
+		return heading(hyperlink(title, issueHtmlUrl), HeadingLevel.Three);
+	}
+
+	public static handle(issueClosedEvent: IssuesClosedEvent): ContainerBuilder {
+		const containerBuilder = new ContainerBuilder();
+		const containerTitleBuilder =
+			IssueClosedEventHandler._createContainerTitle(issueClosedEvent);
+
+		containerBuilder.setAccentColor(PURPLE_COLOR);
+		containerBuilder.addTextDisplayComponents(containerTitleBuilder);
+
+		return containerBuilder;
+	}
 }

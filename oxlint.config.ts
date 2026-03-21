@@ -16,6 +16,12 @@ export default defineConfig({
 		'prefer-node-protocol': 'error',
 		'prefer-nullish-coalescing': 'error',
 		'sort-keys': 'warn',
+		'typescript/unbound-method': [
+			'error',
+			{
+				ignoreStatic: true,
+			},
+		],
 		'unified-signatures': 'error',
 	},
 });

@@ -48340,33 +48340,68 @@ var integrationTypesPredicate2 = s3.array(
 function embedLength(data) {
   return (data.title?.length ?? 0) + (data.description?.length ?? 0) + (data.fields?.reduce((prev, curr) => prev + curr.name.length + curr.value.length, 0) ?? 0) + (data.footer?.text.length ?? 0) + (data.author?.name.length ?? 0);
 }
-__name(embedLength, "embedLength");const GREEN_COLOR = 0x1a7f37;
-const PURPLE_COLOR = 0x8250df;const ISSUE_CLOSED_EMOJI = '<:_:1484004392586969128>';
-const ISSUE_OPENED_EMOJI = '<:_:1483983242527899738>';/* biome-ignore-all lint/style/useNamingConvention: (x) */
-function ISSUE_CLOSED_MESSAGE({ issue, repository }) {
-    const { number: issueNumber, title: issueTitle, url: issueUrl } = issue;
-    const { full_name: repositoryFullName } = repository;
-    const containerBuilder = new ContainerBuilder();
-    const containerTitleBuilder = new TextDisplayBuilder();
-    containerTitleBuilder.setContent(heading(hyperlink(`${ISSUE_CLOSED_EMOJI} [${repositoryFullName}] (Issue #${issueNumber}) ${issueTitle}`, issueUrl), HeadingLevel.Three));
-    containerBuilder.addTextDisplayComponents(containerTitleBuilder);
-    containerBuilder.setAccentColor(PURPLE_COLOR);
-    return containerBuilder;
-}/* biome-ignore-all lint/style/useNamingConvention: (x) */
-function ISSUE_OPENED_MESSAGE({ issue, repository }) {
-    const { body: issueBody, number: issueNumber, title: issueTitle, url: issueUrl } = issue;
-    const { full_name: repositoryFullName } = repository;
-    const containerBuilder = new ContainerBuilder();
-    const containerTitleBuilder = new TextDisplayBuilder();
-    containerTitleBuilder.setContent(heading(hyperlink(`${ISSUE_OPENED_EMOJI} [${repositoryFullName}] (Issue #${issueNumber}) ${issueTitle}`, issueUrl), HeadingLevel.Three));
-    containerBuilder.addTextDisplayComponents(containerTitleBuilder);
-    containerBuilder.setAccentColor(GREEN_COLOR);
-    if (issueBody) {
-        const containerBodyBuilder = new TextDisplayBuilder();
-        containerBodyBuilder.setContent(issueBody);
-        containerBuilder.addTextDisplayComponents(containerBodyBuilder);
+__name(embedLength, "embedLength");const GREEN_COLOR = 0x10b981;
+const PURPLE_COLOR = 0x6366f1;class IssueClosedEventHandler {
+    static _createContainerTitle(issueClosedEvent) {
+        const containerTitleString = IssueClosedEventHandler._formatContainerTitle(issueClosedEvent);
+        const containerTitleBuilder = new TextDisplayBuilder().setContent(containerTitleString);
+        return containerTitleBuilder;
     }
-    return containerBuilder;
+    static _formatContainerTitle(issueClosedEvent) {
+        const { issue, repository, sender } = issueClosedEvent;
+        const { html_url: issueHtmlUrl, number: issueNumber } = issue;
+        const { name: repositoryName } = repository;
+        const { login: senderLogin } = sender;
+        const title = escapeMarkdown(`[${repositoryName}] ${senderLogin} has Closed Issue #${issueNumber}`);
+        return heading(hyperlink(title, issueHtmlUrl), HeadingLevel.Three);
+    }
+    static handle(issueClosedEvent) {
+        const containerBuilder = new ContainerBuilder();
+        const containerTitleBuilder = IssueClosedEventHandler._createContainerTitle(issueClosedEvent);
+        containerBuilder.setAccentColor(PURPLE_COLOR);
+        containerBuilder.addTextDisplayComponents(containerTitleBuilder);
+        return containerBuilder;
+    }
+}class IssueOpenedEventHandler {
+    static _createContainerSubtitle(issueOpenedEvent) {
+        const containerSubtitleString = IssueOpenedEventHandler._formatContainerSubtitle(issueOpenedEvent);
+        const containerSubtitleBuilder = new TextDisplayBuilder().setContent(containerSubtitleString);
+        return containerSubtitleBuilder;
+    }
+    static _createContainerTitle(issueOpenedEvent) {
+        const containerTitleString = IssueOpenedEventHandler._formatContainerTitle(issueOpenedEvent);
+        const containerTitleBuilder = new TextDisplayBuilder().setContent(containerTitleString);
+        return containerTitleBuilder;
+    }
+    static _formatContainerSubtitle(issueOpenedEvent) {
+        const { issue } = issueOpenedEvent;
+        const { title: issueTitle } = issue;
+        return bold(escapeBold(issueTitle));
+    }
+    static _formatContainerTitle(issueOpenedEvent) {
+        const { issue, repository, sender } = issueOpenedEvent;
+        const { html_url: issueHtmlUrl, number: issueNumber } = issue;
+        const { name: repositoryName } = repository;
+        const { login: senderLogin } = sender;
+        const title = escapeMarkdown(`[${repositoryName}] ${senderLogin} has Opened Issue #${issueNumber}`);
+        return heading(hyperlink(title, issueHtmlUrl), HeadingLevel.Three);
+    }
+    static handle(issueOpenedEvent) {
+        const { issue } = issueOpenedEvent;
+        const { body: issueBody } = issue;
+        const containerBuilder = new ContainerBuilder();
+        const containerTitleBuilder = IssueOpenedEventHandler._createContainerTitle(issueOpenedEvent);
+        const containerSubtitleBuilder = IssueOpenedEventHandler._createContainerSubtitle(issueOpenedEvent);
+        containerBuilder.setAccentColor(GREEN_COLOR);
+        containerBuilder.addTextDisplayComponents(containerTitleBuilder, containerSubtitleBuilder);
+        if (issueBody) {
+            const containerSeparatorBuilder = new SeparatorBuilder();
+            const containerBodyBuilder = new TextDisplayBuilder();
+            containerBuilder.addSeparatorComponents(containerSeparatorBuilder);
+            containerBuilder.addTextDisplayComponents(containerBodyBuilder);
+        }
+        return containerBuilder;
+    }
 }class WebhookClient {
     webhookId;
     webhookToken;
@@ -48404,8 +48439,8 @@ function ISSUE_OPENED_MESSAGE({ issue, repository }) {
             case 'issues': {
                 const { action } = payload;
                 const messages = {
-                    closed: ISSUE_CLOSED_MESSAGE,
-                    opened: ISSUE_OPENED_MESSAGE,
+                    closed: IssueClosedEventHandler.handle,
+                    opened: IssueOpenedEventHandler.handle,
                 };
                 const message = messages[action];
                 if (message) {

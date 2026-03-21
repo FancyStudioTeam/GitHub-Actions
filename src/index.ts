@@ -3,8 +3,8 @@ import { context } from '@actions/github';
 import { ContainerBuilder } from '@discordjs/builders';
 import { IssuesEvent } from '@octokit/webhooks-types';
 
-import { ISSUE_CLOSED_MESSAGE } from './events/issues/IssueClosed.js';
-import { ISSUE_OPENED_MESSAGE } from './events/issues/IssueOpened.js';
+import { IssueClosedEventHandler } from './events/issues/IssueClosed.js';
+import { IssueOpenedEventHandler } from './events/issues/IssueOpened.js';
 import { WebhookClient } from './structures/WebhookClient.js';
 
 async function run(): Promise<void> {
@@ -21,8 +21,8 @@ async function run(): Promise<void> {
 				const { action } = payload as IssuesEvent;
 
 				const messages: IssueEventMessagesMap = {
-					closed: ISSUE_CLOSED_MESSAGE,
-					opened: ISSUE_OPENED_MESSAGE,
+					closed: IssueClosedEventHandler.handle,
+					opened: IssueOpenedEventHandler.handle,
 				};
 				const message = messages[action];
 
