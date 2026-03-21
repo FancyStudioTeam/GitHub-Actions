@@ -16,6 +16,11 @@ async function run(): Promise<void> {
 
 		const { eventName, payload } = context;
 
+		console.dir(payload, {
+			colors: true,
+			depth: null,
+		});
+
 		switch (eventName) {
 			case 'issues': {
 				const { action } = payload as IssuesEvent;
