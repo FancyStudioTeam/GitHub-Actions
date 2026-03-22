@@ -48575,8 +48575,8 @@ class WebhookClient {
     try {
         await handleEvent(webhookClient, gitHubContext);
     }
-    catch {
-        setFailed('❌ Something went wrong while executing the action [Unknown Error]');
+    catch (error) {
+        setFailed(`❌ ${error}`);
     }
 })();
 function showContextData(gitHubContext) {
