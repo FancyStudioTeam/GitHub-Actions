@@ -11,7 +11,6 @@ import {
 	TextDisplayBuilder,
 } from '@discordjs/builders';
 import type { Commit, PushEvent } from '@octokit/webhooks-types';
-import { REPO_PUSH_EMOJI } from '#/lib/Emojis.js';
 
 const GITHUB_COMMIT_HASH_LENGTH = 7;
 
@@ -73,7 +72,7 @@ export const PushEventHandler = Object.freeze({
 
 		const formattedBranch = GitHubUtils.formatBranch(ref);
 		const formattedTitle = escapeMarkdown(
-			`${REPO_PUSH_EMOJI} [${repositoryName}] ${commitsLength} new Commit(s) at ${formattedBranch}`,
+			`[${repositoryName}] ${commitsLength} new Commit(s) at ${formattedBranch}`,
 		);
 
 		return heading(hyperlink(formattedTitle, compare), HeadingLevel.Three);

@@ -48355,8 +48355,7 @@ function embedLength(data) {
 }
 __name(embedLength, "embedLength");const GREEN_COLOR = 0x10b981;
 const PURPLE_COLOR = 0x6366f1;const ISSUE_CLOSED_EMOJI = '<:_:1484998086764789780>';
-const ISSUE_OPENED_EMOJI = '<:_:1484998753004814546>';
-const REPO_PUSH_EMOJI = '<:_:1484953588789940426>';const IssueClosedEventHandler = Object.freeze({
+const ISSUE_OPENED_EMOJI = '<:_:1484998753004814546>';const IssueClosedEventHandler = Object.freeze({
     createContainerBuilder() {
         return new ContainerBuilder();
     },
@@ -48478,7 +48477,7 @@ const PushEventHandler = Object.freeze({
         const { length: commitsLength } = commits;
         const { name: repositoryName } = repository;
         const formattedBranch = GitHubUtils.formatBranch(ref);
-        const formattedTitle = escapeMarkdown(`${REPO_PUSH_EMOJI} [${repositoryName}] ${commitsLength} new Commit(s) at ${formattedBranch}`);
+        const formattedTitle = escapeMarkdown(`[${repositoryName}] ${commitsLength} new Commit(s) at ${formattedBranch}`);
         return heading(hyperlink(formattedTitle, compare), HeadingLevel.Three);
     },
     handle(pushEvent) {
