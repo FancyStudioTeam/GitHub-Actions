@@ -17,4 +17,5 @@ jobs:
               uses: FancyStudioTeam/GitHub-Actions@main
               with:
                   webhook_id: ${{ secrets.DISCORD_WEBHOOK_ID }}
+                  webhook_thread_id: ${{ secrets.DISCORD_WEBHOOK_THREAD_ID }}
                   webhook_token: ${{ secrets.DISCORD_WEBHOOK_TOKEN }}
