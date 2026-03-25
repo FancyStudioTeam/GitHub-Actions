@@ -9,7 +9,7 @@
 	},
 	"description": "A collection of custom GitHub Actions used in FancyStudio",
 	"devDependencies": {
-		"@biomejs/biome": "2.4.8",
+		"@biomejs/biome": "2.4.9",
 		"@octokit/webhooks-types": "7.6.1",
 		"@rollup/plugin-commonjs": "29.0.2",
 		"@rollup/plugin-node-resolve": "16.0.3",
