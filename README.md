@@ -1,6 +1,6 @@
 # 🐙 GitHub Webhooks
 
-An application that manages incoming GitHub Webhooks within the FancyStudio organization
+An application that manages incoming GitHub Webhooks within the FancyStudio organization.
 
 ## 📄 License
 
