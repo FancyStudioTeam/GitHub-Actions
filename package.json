@@ -9,8 +9,13 @@
 	"description": "An application that manages incoming GitHub Webhooks within the FancyStudio organization",
 	"devDependencies": {
 		"@biomejs/biome": "2.4.9",
+		"@commitlint/cli": "20.5.0",
+		"@commitlint/config-conventional": "20.5.0",
+		"@commitlint/types": "20.5.0",
 		"@octokit/webhooks-types": "7.6.1",
 		"@types/node": "25.5.0",
+		"husky": "9.1.7",
+		"lint-staged": "16.4.0",
 		"typescript": "6.0.2",
 		"wrangler": "4.78.0"
 	},
@@ -27,6 +32,7 @@
 		"biome:check": "biome check",
 		"biome:ci": "biome ci",
 		"biome:write": "biome check --write",
+		"prepare": "husky",
 		"wrangler:ci": "wrangler deploy --dry-run",
 		"wrangler:deploy": "wrangler deploy",
 		"wrangler:deploy:dry": "wrangler deploy --dry-run",
