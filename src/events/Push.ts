@@ -19,11 +19,11 @@ const GitHubUtils = {
 		const references = referenceString.split('/');
 		const branch = references.at(-1);
 
-		return branch ?? 'unknown';
+		return escapeMarkdown(branch ?? 'unknown');
 	},
 
 	formatCommitId(idString: string): string {
-		return idString.slice(0, GITHUB_COMMIT_HASH_LENGTH);
+		return escapeMarkdown(idString.slice(0, GITHUB_COMMIT_HASH_LENGTH));
 	},
 } as const;
 
@@ -90,7 +90,7 @@ export const PushEventHandler = Object.freeze({
 		const { length: commitsLength } = commits;
 		const { name: repositoryName } = repository;
 
-		const formattedBranch = GitHubUtils.formatBranch(ref);
+		const formattedBranch = inlineCode(GitHubUtils.formatBranch(ref));
 		const formattedTitle = hyperlink(
 			escapeMarkdown(
 				`[${repositoryName}] ${commitsLength} New Commits at ${formattedBranch}`,
