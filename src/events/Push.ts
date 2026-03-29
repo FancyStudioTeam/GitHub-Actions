@@ -2,7 +2,6 @@ import {
 	bold,
 	ContainerBuilder,
 	escapeBold,
-	escapeMarkdown,
 	HeadingLevel,
 	heading,
 	hyperlink,
@@ -90,11 +89,9 @@ export const PushEventHandler = Object.freeze({
 		const { length: commitsLength } = commits;
 		const { name: repositoryName } = repository;
 
-		const formattedBranch = GitHubUtils.formatBranch(ref);
+		const formattedBranch = inlineCode(GitHubUtils.formatBranch(ref));
 		const formattedTitle = hyperlink(
-			escapeMarkdown(
-				`[${repositoryName}] ${commitsLength} New Commits at ${formattedBranch}`,
-			),
+			`[${repositoryName}] ${commitsLength} New Commit(s) at ${formattedBranch}`,
 			compare,
 		);
 
